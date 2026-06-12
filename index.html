@@ -245,6 +245,77 @@ main{position:relative;z-index:3}
 #orc{--accent:#9ab84e}
 #wizard{--accent:#8d7bff}
 #lich{--accent:#4ed8c3}
+#goblin{--accent:#a8c94c}
+#vampire{--accent:#b06ae0}
+
+/* ---------- 图鉴数据 ---------- */
+.ledger{
+  max-width:1180px;margin:0 auto;
+  padding:clamp(4rem,8vh,6rem) 5vw 0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.4rem;
+}
+.ledger-item{
+  border:1px solid var(--line);border-radius:14px;
+  padding:1.8rem 1.6rem;text-align:center;
+  background:rgba(255,255,255,.018);
+}
+.ledger-num{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(2rem,4.5vw,3.2rem);color:var(--gold);
+  display:block;line-height:1.2;
+}
+.ledger-label{font-size:.74rem;letter-spacing:.3em;color:var(--ink-dim)}
+
+/* ---------- 委托告示板 ---------- */
+.board{max-width:880px;margin:0 auto;padding:clamp(7rem,14vh,10rem) 5vw;text-align:center}
+.board h2{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(2.4rem,6vw,4.5rem);letter-spacing:.1em;margin-bottom:1rem;
+}
+.board-sub{color:var(--ink-dim);margin-bottom:3.5rem}
+.quest{
+  position:relative;text-align:left;
+  border:1px solid rgba(232,180,85,.35);border-radius:6px;
+  padding:3rem 2.6rem 2.4rem;
+  background:
+    linear-gradient(165deg,rgba(232,180,85,.07),rgba(232,180,85,.015) 60%),
+    var(--bg2);
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+  transition:opacity .35s,transform .35s;
+}
+.quest.flipping{opacity:0;transform:translateY(14px) rotate(.6deg)}
+.quest::before{
+  content:'懸賞';position:absolute;top:1.4rem;right:1.6rem;
+  font-family:var(--serif);font-weight:900;font-size:.9rem;letter-spacing:.3em;
+  color:var(--ember);border:2px solid var(--ember);border-radius:4px;
+  padding:.35rem .6rem;transform:rotate(8deg);opacity:.85;
+}
+.quest-row{margin-bottom:1.5rem}
+.quest-key{
+  display:block;font-size:.7rem;letter-spacing:.45em;
+  color:var(--gold);margin-bottom:.4rem;
+}
+.quest-val{
+  font-family:var(--serif);font-size:clamp(1.05rem,2vw,1.35rem);
+  font-weight:600;color:var(--ink);line-height:1.6;
+}
+.quest-fine{
+  margin-top:2rem;padding-top:1.4rem;border-top:1px dashed rgba(232,228,218,.2);
+  font-size:.74rem;color:var(--ink-dim);letter-spacing:.08em;
+}
+.quest-btn{
+  margin-top:2.6rem;
+  font-family:var(--serif);font-size:.95rem;letter-spacing:.35em;
+  color:var(--gold);background:none;
+  border:1px solid rgba(232,180,85,.5);border-radius:999px;
+  padding:1rem 2.6rem;cursor:none;
+  transition:background .35s,color .35s,box-shadow .35s;
+}
+@media (hover:none){.quest-btn{cursor:pointer}}
+.quest-btn:hover{
+  background:var(--gold);color:#0a0a12;
+  box-shadow:0 0 32px rgba(232,180,85,.35);
+}
 
 /* ---------- 冒险须知 ---------- */
 .tips{max-width:1180px;margin:0 auto;padding:clamp(7rem,14vh,10rem) 5vw}
@@ -299,6 +370,9 @@ footer .tiny{font-size:.68rem;opacity:.55;margin-top:1.2rem}
     <li><a href="#orc">兽人</a></li>
     <li><a href="#wizard">巫师</a></li>
     <li><a href="#lich">巫妖</a></li>
+    <li><a href="#goblin">哥布林</a></li>
+    <li><a href="#vampire">吸血鬼</a></li>
+    <li><a href="#board">告示板</a></li>
     <li><a href="#tips">冒险须知</a></li>
   </ul>
 </nav>
@@ -326,6 +400,14 @@ footer .tiny{font-size:.68rem;opacity:.55;margin-top:1.2rem}
       <span>屠龙</span><span class="gold">✦</span><span>寻宝</span><span class="gold">✦</span><span>掉进陷阱</span><span class="gold">✦</span><span>误签魔契</span><span class="gold">✦</span><span>酒馆斗殴</span><span class="gold">✦</span><span>抢救队友</span><span class="gold">✦</span><span>给吟游诗人封口费</span><span class="gold">✦</span>
     </div>
   </div>
+
+  <!-- 图鉴数据 -->
+  <section class="ledger">
+    <div class="ledger-item reveal"><span class="ledger-num" data-count="9">0</span><span class="ledger-label">已收录种族</span></div>
+    <div class="ledger-item reveal"><span class="ledger-num" data-count="12" data-suffix="%">0</span><span class="ledger-label">冒险者平均生还率</span></div>
+    <div class="ledger-item reveal"><span class="ledger-num" data-count="666">0</span><span class="ledger-label">恶魔合同小字条款</span></div>
+    <div class="ledger-item reveal"><span class="ledger-num" data-count="4096">0</span><span class="ledger-label">年均麦酒消耗 / 桶</span></div>
+  </section>
 
   <!-- 01 龙 -->
   <section class="chapter" id="dragon">
@@ -488,7 +570,7 @@ footer .tiny{font-size:.68rem;opacity:.55;margin-top:1.2rem}
       <div class="chapter-body reveal">
         <p>巫师是一群住在塔里的学者，塔的高度与<b>不想被人打扰的程度</b>成正比。他们掌握着撕裂天空、冻结时间的力量，但你让他清理一下书桌，他会说需要先发明一个新的分类学派。</p>
         <p>向巫师求助的标准流程：你说明来意，他说"有意思"，然后消失在书堆里。两百年后，你的曾曾曾孙会收到一封信，开头是"<b>关于你先祖提出的问题，我有了一些初步想法</b>"。</p>
-        <p>巫师之间的学术争端非常precise且文明：先发表论文互相驳斥，再在年会上阴阳怪气，最后才动用陨石术。值得敬佩的是，他们管最后这个环节叫<b>"同行评审"</b>。</p>
+        <p>巫师之间的学术争端非常严谨且文明：先发表论文互相驳斥，再在年会上阴阳怪气，最后才动用陨石术。值得敬佩的是，他们管最后这个环节叫<b>"同行评审"</b>。</p>
         <div class="note">
           <strong>冒险者备注</strong>
           当巫师说"这个法术我有八成把握"，意思是有两成概率你们全队变成青蛙。请自备荷叶。
@@ -537,6 +619,81 @@ footer .tiny{font-size:.68rem;opacity:.55;margin-top:1.2rem}
     </div>
   </section>
 
+  <!-- 08 哥布林 -->
+  <section class="chapter alt" id="goblin">
+    <div class="chapter-ghost" data-speed="0.1">08</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第捌章 / GOBLIN</span>
+      <h2><span class="cn">哥布林</span><span class="latin">Goblinus Negotians · 地下世界的灰色经济学家</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>哥布林名声不佳，主要是因为他们总在你最穷的时候准时出现，向你推销一把<b>"几乎全新"</b>的剑——上一任主人也"几乎"没死。哥布林语里没有"二手"这个词，只有"经过验证"。</p>
+        <p>哥布林文明的支柱产业是回收：冒险者掉的、地下城塌的、龙看不上的，统统进货。他们的国训刻在每一座洞穴入口：<b>"你的垃圾，是我的库存。"</b></p>
+        <p>数量是哥布林的核心战术。一只哥布林会向你鞠躬道歉；十只会顺走你的钱包；一百只会就地注册一家商会，发行股票，召开发布会，然后在上市当天<b>集体卷款消失</b>。商业史学家称之为"哥布林周期"。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          和哥布林握手成交后请清点手指——交易前十根，交易后也必须是十根。并且得是你自己的。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">🪙</span>
+          <div class="stat-row"><div class="stat-label">商业嗅觉 <i>闻钱而动</i></div><div class="stat-bar"><div class="stat-fill" style="--w:95%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">单兵战力 <i>忽略不计</i></div><div class="stat-bar"><div class="stat-fill" style="--w:7%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">群体战力 <i>指数增长</i></div><div class="stat-bar"><div class="stat-fill" style="--w:82%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">售后跑路速度 <i>音速</i></div><div class="stat-bar"><div class="stat-fill" style="--w:99%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">商品描述可信度 <i>"几乎"</i></div><div class="stat-bar"><div class="stat-fill" style="--w:18%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 吸血鬼 -->
+  <section class="chapter" id="vampire">
+    <div class="chapter-ghost" data-speed="0.12">09</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第玖章 / VAMPIRE</span>
+      <h2><span class="cn">吸血鬼</span><span class="latin">Nobilis Nocturnus · 睡棺材的房产大亨</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>吸血鬼是奇幻界最成功的不动产投资者：<b>永生意味着房贷毫无意义</b>。三百年前随手置办的山顶城堡，如今已是带护城河、带管家、带哥特尖顶的传世豪宅——虽然采光确实是硬伤，但他们恰好不需要。</p>
+        <p>他们优雅、苍白、永远穿得像要去听歌剧首演。代价是一长串繁琐的生活守则：晒不得太阳，进门必须等主人邀请，看到散落的米粒就<b>必须数完</b>——猎人手册第一页写的不是银弹，是"随身带一把米"。</p>
+        <p>大蒜、圣水、十字架……吸血鬼的弱点清单读起来像挑剔食客的忌口单。但真正致命的弱点是<b>傲慢</b>：每个老练的猎人都知道，只要引诱吸血鬼开始讲述自己的贵族家谱，讲着讲着，天就亮了。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          受邀去吸血鬼城堡共进晚餐前，请务必确认你的身份是客人，而不是菜单。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">🦇</span>
+          <div class="stat-row"><div class="stat-label">优雅程度 <i>哥特满分</i></div><div class="stat-bar"><div class="stat-fill" style="--w:98%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">不动产持有 <i>跨世纪</i></div><div class="stat-bar"><div class="stat-fill" style="--w:96%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">家谱长度 <i>讲到天亮</i></div><div class="stat-bar"><div class="stat-fill" style="--w:100%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">耐晒指数 <i>零</i></div><div class="stat-bar"><div class="stat-fill" style="--w:2%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">忌口清单 <i>比贵族还挑</i></div><div class="stat-bar"><div class="stat-fill" style="--w:88%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 委托告示板 -->
+  <section class="board" id="board">
+    <div class="reveal">
+      <h2>冒险者委托告示板</h2>
+      <p class="board-sub">酒馆墙上钉着的最新委托。揭单之前，建议先把第叁章再读一遍。</p>
+    </div>
+    <div class="quest reveal" id="quest">
+      <div class="quest-row"><span class="quest-key">雇 主</span><span class="quest-val" id="q-employer">焦虑的村长</span></div>
+      <div class="quest-row"><span class="quest-key">委 托</span><span class="quest-val" id="q-task">调查磨坊里"绝对不是闹鬼"的怪声</span></div>
+      <div class="quest-row"><span class="quest-key">报 酬</span><span class="quest-val" id="q-reward">三枚金币，外加一句真诚的感谢</span></div>
+      <div class="quest-fine" id="q-fine">※ 小字：路费自理，死亡不予赔偿。</div>
+    </div>
+    <button class="quest-btn reveal" id="quest-btn">✦ 揭一张新委托 ✦</button>
+  </section>
+
   <!-- 冒险须知 -->
   <section class="tips" id="tips">
     <div class="reveal">
@@ -567,7 +724,7 @@ const dot=document.querySelector('.cursor-dot'),ring=document.querySelector('.cu
 let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
 addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;});
 (function ringLoop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(ringLoop);})();
-document.querySelectorAll('a,.tip,.stat-card').forEach(el=>{
+document.querySelectorAll('a,.tip,.stat-card,.quest-btn,.ledger-item').forEach(el=>{
   el.addEventListener('mouseenter',()=>ring.classList.add('hovering'));
   el.addEventListener('mouseleave',()=>ring.classList.remove('hovering'));
 });
@@ -638,6 +795,39 @@ const io=new IntersectionObserver(entries=>{
   for(const en of entries)if(en.isIntersecting){en.target.classList.add('visible');io.unobserve(en.target);}
 },{threshold:.18});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- 图鉴数据计数 ---------- */
+const counterIO=new IntersectionObserver(entries=>{
+  for(const en of entries){
+    if(!en.isIntersecting)continue;
+    counterIO.unobserve(en.target);
+    const el=en.target,target=+el.dataset.count,suffix=el.dataset.suffix||'';
+    const t0=performance.now(),dur=1600;
+    (function tick(now){
+      const p=Math.min((now-t0)/dur,1),ease=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*ease)+suffix;
+      if(p<1)requestAnimationFrame(tick);
+    })(t0);
+  }
+},{threshold:.6});
+document.querySelectorAll('.ledger-num').forEach(el=>counterIO.observe(el));
+
+/* ---------- 委托告示板 ---------- */
+const EMPLOYERS=['焦虑的村长','神秘的兜帽人（脸看不清，钱包很鼓）','破产的炼金术士','自称"这次绝对没问题"的巫师','酒馆老板娘（不容拒绝）','一只会写字的猫头鹰','金盆洗手的退休屠龙者','哭泣的公主（身份待核实）'];
+const TASKS=['找回被哥布林"代为保管"的传家宝','护送一车会唱歌的奶酪穿过黑森林','调查磨坊里"绝对不是闹鬼"的怪声','趁巨龙熟睡时给它修剪指甲','把一封情书亲手交给亡灵法师','寻找失踪的第四位队友（第三位也顺便找找）','说服山顶的隐士补缴过去四十年的税','清理地窖里那只"小型"史莱姆（门已经打不开了）'];
+const REWARDS=['三枚金币，外加一句真诚的感谢','一把祖传宝剑（详见小字）','半张藏宝图（另外半张被山羊吃了）','一次免费复活机会（仅限本店使用）','全村最好的一头羊','麦酒无限畅饮券（仅限周二）','一个愿望（兑现率存疑）','公主的吻（公主身份存疑）'];
+const FINES=['路费自理，死亡不予赔偿。','雇主保留随时人间蒸发的权利。','实际难度可能与描述严重不符。','龙的情绪问题不在保险范围内。','若途中邪神苏醒，请冒险者自行妥善处理。','报酬可能以等价物（萝卜）形式支付。','任务完成后请勿对吟游诗人声张。','本委托最终解释权归兜帽人所有。'];
+const pick=(arr,not)=>{let v;do{v=arr[Math.floor(Math.random()*arr.length)]}while(v===not&&arr.length>1);return v};
+const quest=document.getElementById('quest');
+document.getElementById('quest-btn').addEventListener('click',()=>{
+  quest.classList.add('flipping');
+  setTimeout(()=>{
+    const set=(id,arr)=>{const el=document.getElementById(id);el.textContent=pick(arr,el.textContent)};
+    set('q-employer',EMPLOYERS);set('q-task',TASKS);set('q-reward',REWARDS);
+    document.getElementById('q-fine').textContent='※ 小字：'+pick(FINES);
+    quest.classList.remove('flipping');
+  },350);
+});
 
 /* ---------- 卡片 3D 倾斜 ---------- */
 document.querySelectorAll('.tilt').forEach(card=>{
