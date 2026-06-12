@@ -149,7 +149,9 @@ main{position:relative;z-index:3}
 @keyframes up{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
 
 /* ---------- 跑马灯 ---------- */
-.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:1.5rem 0;background:rgba(255,255,255,.015)}
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:1.5rem 0;background:rgba(255,255,255,.015)}
+.mq-row{overflow:hidden;white-space:nowrap}
+.mq-row+.mq-row{margin-top:.9rem}
 .marquee-track{display:inline-block;animation:mq 26s linear infinite}
 .marquee span{font-family:var(--mono);font-weight:700;font-size:clamp(1.1rem,2.2vw,1.7rem);letter-spacing:.3em;margin:0 1.8rem;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
 .marquee span.solid{color:var(--ink);-webkit-text-stroke:0}
@@ -296,6 +298,55 @@ footer .tiny{font-size:.66rem;opacity:.5;margin-top:1.1rem}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .reveal{opacity:1;transform:none;filter:none}
 }
+
+/* ---------- 加料：流光标题 ---------- */
+.hero h1 .grad{background-size:220% 100%;animation:shimmer 7s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* ---------- 加料：3D 线框体画布 ---------- */
+#ico{position:absolute;inset:0;width:100%;height:100%}
+
+/* ---------- 加料：透视网格地板 ---------- */
+.floor{
+  position:absolute;left:-50%;bottom:-4vh;width:200%;height:42vh;
+  pointer-events:none;opacity:.5;
+  background:
+    repeating-linear-gradient(90deg,rgba(123,92,255,.22) 0 1px,transparent 1px 90px),
+    repeating-linear-gradient(0deg,rgba(52,208,255,.18) 0 1px,transparent 1px 90px);
+  transform:perspective(680px) rotateX(63deg);transform-origin:bottom;
+  -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 82%);
+  mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 82%);
+  animation:gridmove 2.6s linear infinite;
+}
+@keyframes gridmove{to{background-position:0 90px,0 90px}}
+
+/* ---------- 加料：全息卡片光泽 ---------- */
+.card{position:relative;overflow:hidden}
+.card:not(.quest)::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(340px circle at var(--sx,50%) var(--sy,-30%),rgba(255,255,255,.13),transparent 58%);
+  opacity:0;transition:opacity .45s;
+}
+.card:not(.quest):hover::after{opacity:1}
+
+/* ---------- 加料：徽章轨道粒子 ---------- */
+.stat-sigil{position:relative}
+.orb-dot{
+  position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;
+  border-radius:50%;background:#fff;pointer-events:none;
+  box-shadow:0 0 10px 2px rgba(123,92,255,.85);
+  animation:orbit var(--odur,5s) linear infinite;animation-delay:var(--odel,0s);
+}
+@keyframes orbit{
+  from{transform:rotate(0deg) translateX(var(--orad,52px)) scale(1)}
+  50%{transform:rotate(180deg) translateX(var(--orad,52px)) scale(.55)}
+  to{transform:rotate(360deg) translateX(var(--orad,52px)) scale(1)}
+}
+
+/* ---------- 加料：反向跑马灯 ---------- */
+.marquee-track.rev{animation-direction:reverse}
+
+main{will-change:transform}
 </style>
 </head>
 <body>
@@ -329,9 +380,11 @@ footer .tiny{font-size:.66rem;opacity:.5;margin-top:1.1rem}
 
   <!-- 英雄区 -->
   <section class="hero">
+    <div class="floor" aria-hidden="true"></div>
     <div class="orb-wrap" id="orb-wrap">
       <div class="orb"></div>
       <div class="ring"></div>
+      <canvas id="ico"></canvas>
     </div>
     <div class="hero-inner">
       <p class="eyebrow"><i></i>A FIELD GUIDE TO CLASSIC FANTASY</p>
@@ -350,10 +403,14 @@ footer .tiny{font-size:.66rem;opacity:.5;margin-top:1.1rem}
 
   <!-- 跑马灯 -->
   <div class="marquee" aria-hidden="true">
-    <div class="marquee-track">
+    <div class="mq-row"><div class="marquee-track">
       <span>屠龙</span><b>✦</b><span class="solid">寻宝</span><b>✦</b><span>掉进陷阱</span><b>✦</b><span class="solid">误签魔契</span><b>✦</b><span>酒馆斗殴</span><b>✦</b><span class="solid">抢救队友</span><b>✦</b><span>给吟游诗人封口费</span><b>✦</b>
       <span>屠龙</span><b>✦</b><span class="solid">寻宝</span><b>✦</b><span>掉进陷阱</span><b>✦</b><span class="solid">误签魔契</span><b>✦</b><span>酒馆斗殴</span><b>✦</b><span class="solid">抢救队友</span><b>✦</b><span>给吟游诗人封口费</span><b>✦</b>
-    </div>
+    </div></div>
+    <div class="mq-row"><div class="marquee-track rev">
+      <span class="solid">DRACO</span><b>✧</b><span>ELF</span><b>✧</b><span class="solid">DAEMON</span><b>✧</b><span>DVERGR</span><b>✧</b><span class="solid">ORC</span><b>✧</b><span>MAGUS</span><b>✧</b><span class="solid">LICH</span><b>✧</b><span>GOBLIN</span><b>✧</b><span class="solid">VAMPIRE</span><b>✧</b>
+      <span class="solid">DRACO</span><b>✧</b><span>ELF</span><b>✧</b><span class="solid">DAEMON</span><b>✧</b><span>DVERGR</span><b>✧</b><span class="solid">ORC</span><b>✧</b><span>MAGUS</span><b>✧</b><span class="solid">LICH</span><b>✧</b><span>GOBLIN</span><b>✧</b><span class="solid">VAMPIRE</span><b>✧</b>
+    </div></div>
   </div>
 
   <!-- 图鉴数据 -->
@@ -674,30 +731,166 @@ addEventListener('mousemove',e=>{
   orbWrap.style.transform=`translate(${px*36}px,${py*26}px)`;
 });
 
-/* ---------- 尘埃粒子 ---------- */
+/* ---------- 统一特效引擎：星座尘埃 + 光标拖尾 + 点击爆裂 ---------- */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const PAL=[258,196,318];
 const dc=document.getElementById('dust'),dx2=dc.getContext('2d');
-let dust=[];
+let dust=[],trail=[],bursts=[];
 function initDust(){
   dc.width=innerWidth;dc.height=innerHeight;
-  dust=Array.from({length:Math.min(90,innerWidth/14)},()=>({
+  dust=Array.from({length:Math.min(85,innerWidth/15)},()=>({
     x:Math.random()*dc.width,y:Math.random()*dc.height,
     r:Math.random()*1.6+.3,vy:-(.08+Math.random()*.3),vx:(Math.random()-.5)*.12,
     p:Math.random()*Math.PI*2,s:.006+Math.random()*.015,
-    hue:[258,196,318][Math.floor(Math.random()*3)]
+    hue:PAL[Math.floor(Math.random()*3)]
   }));
 }
 initDust();addEventListener('resize',initDust);
-(function dustLoop(){
+addEventListener('mousemove',e=>{
+  if(RM)return;
+  if(trail.length<120&&Math.random()<.6)trail.push({
+    x:e.clientX+(Math.random()-.5)*8,y:e.clientY+(Math.random()-.5)*8,
+    r:Math.random()*1.8+.6,life:1,hue:PAL[Math.floor(Math.random()*3)]
+  });
+});
+addEventListener('pointerdown',e=>{
+  if(RM)return;
+  for(let i=0;i<16;i++){
+    const a=Math.random()*Math.PI*2,sp=1.4+Math.random()*3;
+    bursts.push({x:e.clientX,y:e.clientY,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
+      r:Math.random()*2+1,life:1,hue:PAL[Math.floor(Math.random()*3)]});
+  }
+});
+(function fxLoop(){
   dx2.clearRect(0,0,dc.width,dc.height);
+  /* 尘埃 + 星座连线 */
   for(const p of dust){
     p.x+=p.vx;p.y+=p.vy;p.p+=p.s;
     if(p.y<-8){p.y=dc.height+8;p.x=Math.random()*dc.width}
     const a=.12+Math.abs(Math.sin(p.p))*.4;
     dx2.beginPath();dx2.arc(p.x,p.y,p.r,0,7);
     dx2.fillStyle=`hsla(${p.hue},90%,72%,${a})`;dx2.fill();
+    const dxm=p.x-mx,dym=p.y-my,dist=Math.hypot(dxm,dym);
+    if(dist<150){
+      dx2.beginPath();dx2.moveTo(p.x,p.y);dx2.lineTo(mx,my);
+      dx2.strokeStyle=`hsla(${p.hue},85%,70%,${(1-dist/150)*.32})`;
+      dx2.lineWidth=.6;dx2.stroke();
+    }
   }
-  requestAnimationFrame(dustLoop);
+  for(let i=0;i<dust.length;i++)for(let j=i+1;j<dust.length;j++){
+    const a=dust[i],b=dust[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<82){
+      dx2.beginPath();dx2.moveTo(a.x,a.y);dx2.lineTo(b.x,b.y);
+      dx2.strokeStyle=`rgba(255,255,255,${(1-d/82)*.07})`;
+      dx2.lineWidth=.5;dx2.stroke();
+    }
+  }
+  /* 拖尾 + 爆裂（加色发光） */
+  dx2.globalCompositeOperation='lighter';
+  trail=trail.filter(p=>p.life>0);
+  for(const p of trail){
+    p.life-=.035;p.y-=.4;
+    dx2.beginPath();dx2.arc(p.x,p.y,p.r*p.life,0,7);
+    dx2.fillStyle=`hsla(${p.hue},95%,70%,${p.life*.55})`;dx2.fill();
+  }
+  bursts=bursts.filter(p=>p.life>0);
+  for(const p of bursts){
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.045;p.vx*=.985;p.life-=.016;
+    dx2.beginPath();dx2.arc(p.x,p.y,p.r*p.life,0,7);
+    dx2.fillStyle=`hsla(${p.hue},95%,68%,${p.life*.8})`;dx2.fill();
+  }
+  dx2.globalCompositeOperation='source-over';
+  requestAnimationFrame(fxLoop);
 })();
+
+/* ---------- 3D 线框二十面体 ---------- */
+const ic=document.getElementById('ico'),ix=ic.getContext('2d');
+function sizeIco(){const hero=document.querySelector('.hero');ic.width=hero.offsetWidth;ic.height=hero.offsetHeight}
+sizeIco();addEventListener('resize',sizeIco);
+const T=(1+Math.sqrt(5))/2;
+const VERTS=[[-1,T,0],[1,T,0],[-1,-T,0],[1,-T,0],[0,-1,T],[0,1,T],[0,-1,-T],[0,1,-T],[T,0,-1],[T,0,1],[-T,0,-1],[-T,0,1]]
+  .map(v=>{const l=Math.hypot(...v);return v.map(n=>n/l)});
+const EDGES=[];
+for(let i=0;i<12;i++)for(let j=i+1;j<12;j++){
+  const d=Math.hypot(VERTS[i][0]-VERTS[j][0],VERTS[i][1]-VERTS[j][1],VERTS[i][2]-VERTS[j][2]);
+  if(d<1.1)EDGES.push([i,j]);
+}
+let icoT=0,icoMX=0,icoMY=0;
+addEventListener('mousemove',e=>{icoMX=e.clientX/innerWidth-.5;icoMY=e.clientY/innerHeight-.5});
+(function icoLoop(){
+  if(!RM)icoT+=.004;
+  ix.clearRect(0,0,ic.width,ic.height);
+  const cx=ic.width/2,cy=ic.height/2,R=Math.min(ic.width,ic.height)*.26;
+  const ax=icoT*.7+icoMY*.9,ay=icoT+icoMX*1.2;
+  const hue=265+Math.sin(icoT*.6)*55;
+  const pts=VERTS.map(([x,y,z])=>{
+    let y1=y*Math.cos(ax)-z*Math.sin(ax),z1=y*Math.sin(ax)+z*Math.cos(ax);
+    let x2=x*Math.cos(ay)+z1*Math.sin(ay),z2=-x*Math.sin(ay)+z1*Math.cos(ay);
+    const s=3.2/(3.2+z2);
+    return{x:cx+x2*R*s,y:cy+y1*R*s,z:z2};
+  });
+  const sorted=[...EDGES].sort((a,b)=>(pts[a[0]].z+pts[a[1]].z)-(pts[b[0]].z+pts[b[1]].z));
+  for(const[i,j]of sorted){
+    const depth=(pts[i].z+pts[j].z)/2;
+    const al=.16+(depth+1)/2*.5;
+    ix.beginPath();ix.moveTo(pts[i].x,pts[i].y);ix.lineTo(pts[j].x,pts[j].y);
+    ix.strokeStyle=`hsla(${hue},85%,72%,${al})`;ix.lineWidth=1;ix.stroke();
+  }
+  for(const p of pts){
+    const al=.3+(p.z+1)/2*.6;
+    ix.beginPath();ix.arc(p.x,p.y,2.2,0,7);
+    ix.shadowColor=`hsla(${hue},90%,70%,${al})`;ix.shadowBlur=10;
+    ix.fillStyle=`hsla(${hue},95%,82%,${al})`;ix.fill();ix.shadowBlur=0;
+  }
+  requestAnimationFrame(icoLoop);
+})();
+
+/* ---------- 滚动速度斜切 ---------- */
+const mainEl=document.querySelector('main');
+let lastY=scrollY,skew=0;
+(function skewLoop(){
+  if(!RM){
+    const v=scrollY-lastY;lastY=scrollY;
+    const target=Math.max(-3.2,Math.min(3.2,v*.05));
+    skew+=(target-skew)*.09;
+    mainEl.style.transform=Math.abs(skew)>.01?`skewY(${skew.toFixed(3)}deg)`:'';
+  }
+  requestAnimationFrame(skewLoop);
+})();
+
+/* ---------- 全息卡片光泽 ---------- */
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--sx',((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--sy',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+
+/* ---------- 徽章轨道粒子 ---------- */
+document.querySelectorAll('.stat-sigil').forEach(sig=>{
+  [[52,'4.6s','0s'],[62,'7s','-2s'],[44,'5.8s','-4s']].forEach(([rad,dur,del])=>{
+    const d=document.createElement('span');
+    d.className='orb-dot';
+    d.style.setProperty('--orad',rad+'px');
+    d.style.setProperty('--odur',dur);
+    d.style.setProperty('--odel',del);
+    sig.appendChild(d);
+  });
+});
+
+/* ---------- 章节标题解码 ---------- */
+const GLYPHS='✦✧※†‡ΔΘΦΨΩ龍靈魔妖巫影焰晶咒符塵奧';
+function scramble(el){
+  const orig=el.textContent;let frame=0;
+  const total=Math.max(14,orig.length*7);
+  const iv=setInterval(()=>{
+    frame++;
+    const prog=frame/total;
+    el.textContent=[...orig].map((ch,i)=>i/orig.length<prog?ch:GLYPHS[Math.floor(Math.random()*GLYPHS.length)]).join('');
+    if(frame>=total){el.textContent=orig;clearInterval(iv)}
+  },42);
+}
 
 /* ---------- 进度条 + 幽灵数字视差 ---------- */
 const progress=document.querySelector('.progress');
@@ -713,7 +906,11 @@ addEventListener('scroll',()=>{
 
 /* ---------- 滚动浮现 ---------- */
 const io=new IntersectionObserver(entries=>{
-  for(const en of entries)if(en.isIntersecting){en.target.classList.add('visible');io.unobserve(en.target);}
+  for(const en of entries)if(en.isIntersecting){
+    en.target.classList.add('visible');io.unobserve(en.target);
+    const cn=en.target.querySelector&&en.target.querySelector('h2 .cn');
+    if(cn&&!cn.dataset.dec&&!RM){cn.dataset.dec=1;scramble(cn)}
+  }
 },{threshold:.15});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
