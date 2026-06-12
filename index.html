@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奇幻冒险图鉴 · 西式奇幻生物不完全指南</title>
+<meta name="description" content="一份不太严肃的西式奇幻生物图鉴：龙、精灵、恶魔、矮人、兽人、巫师与巫妖。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070c;
+  --bg2:#0c0c14;
+  --ink:#e8e4da;
+  --ink-dim:#8a8578;
+  --line:rgba(232,228,218,.12);
+  --gold:#e8b455;
+  --ember:#ff6b35;
+  --serif:'Noto Serif SC',serif;
+  --sans:'Noto Sans SC',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-weight:300;
+  overflow-x:hidden;
+  cursor:none;
+  line-height:1.9;
+}
+@media (hover:none){body{cursor:auto}}
+::selection{background:var(--gold);color:#000}
+
+/* ---------- 自定义光标 ---------- */
+.cursor-dot,.cursor-ring{
+  position:fixed;top:0;left:0;pointer-events:none;z-index:9999;
+  border-radius:50%;transform:translate(-50%,-50%);
+}
+.cursor-dot{width:6px;height:6px;background:var(--gold)}
+.cursor-ring{
+  width:36px;height:36px;border:1px solid rgba(232,180,85,.5);
+  transition:width .25s,height .25s,border-color .25s;
+}
+.cursor-ring.hovering{width:64px;height:64px;border-color:var(--ember)}
+@media (hover:none){.cursor-dot,.cursor-ring{display:none}}
+
+/* ---------- 背景画布 ---------- */
+#stars,#embers{position:fixed;inset:0;pointer-events:none}
+#stars{z-index:0}
+#embers{z-index:1}
+
+/* ---------- 噪点 ---------- */
+.noise{
+  position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
+
+/* ---------- 进度条 ---------- */
+.progress{
+  position:fixed;top:0;left:0;height:2px;width:0;
+  background:linear-gradient(90deg,var(--gold),var(--ember));
+  z-index:1000;
+}
+
+/* ---------- 导航 ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.4rem 4vw;
+  background:linear-gradient(to bottom,rgba(7,7,12,.85),transparent);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.logo{
+  font-family:var(--serif);font-weight:900;font-size:1.1rem;
+  letter-spacing:.4em;color:var(--ink);text-decoration:none;
+}
+.logo em{color:var(--gold);font-style:normal}
+.nav-links{display:flex;gap:2.2rem;list-style:none}
+.nav-links a{
+  color:var(--ink-dim);text-decoration:none;font-size:.8rem;
+  letter-spacing:.25em;transition:color .3s;
+}
+.nav-links a:hover{color:var(--gold)}
+@media (max-width:760px){.nav-links{display:none}}
+
+/* ---------- 主体层 ---------- */
+main{position:relative;z-index:3}
+
+/* ---------- 英雄区 ---------- */
+.hero{
+  min-height:100svh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:0 5vw;
+}
+.hero-eyebrow{
+  font-size:.78rem;letter-spacing:.6em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:2.2rem;
+  animation:fadeUp 1.2s .2s both;
+}
+.hero h1{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(3.4rem,11vw,9.5rem);
+  line-height:1.08;letter-spacing:.06em;
+  animation:fadeUp 1.2s .45s both;
+}
+.hero h1 .stroke{
+  display:block;
+  color:transparent;
+  -webkit-text-stroke:1.5px rgba(232,228,218,.45);
+  font-size:.62em;letter-spacing:.18em;
+}
+.hero-sub{
+  margin-top:2.6rem;max-width:34em;color:var(--ink-dim);
+  font-size:clamp(.9rem,1.4vw,1.05rem);
+  animation:fadeUp 1.2s .7s both;
+}
+.hero-sub b{color:var(--ink);font-weight:500}
+.scroll-hint{
+  position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);
+  font-size:.7rem;letter-spacing:.5em;color:var(--ink-dim);
+  animation:fadeUp 1.2s 1.1s both;
+}
+.scroll-hint::after{
+  content:'';display:block;width:1px;height:52px;margin:.9rem auto 0;
+  background:linear-gradient(var(--gold),transparent);
+  animation:drip 2s infinite;
+}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:none}}
+
+/* ---------- 跑马灯 ---------- */
+.marquee{
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  overflow:hidden;white-space:nowrap;padding:1.1rem 0;
+  background:rgba(255,255,255,.015);
+}
+.marquee-track{display:inline-block;animation:scroll 30s linear infinite}
+.marquee span{
+  font-family:var(--serif);font-size:1rem;letter-spacing:.35em;
+  color:var(--ink-dim);margin:0 1.6rem;
+}
+.marquee span.gold{color:var(--gold)}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------- 章节通用 ---------- */
+.chapter{
+  position:relative;
+  max-width:1180px;margin:0 auto;
+  padding:clamp(7rem,14vh,11rem) 5vw;
+}
+.chapter-ghost{
+  position:absolute;top:2rem;right:0;
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(8rem,22vw,19rem);line-height:1;
+  color:transparent;-webkit-text-stroke:1px rgba(232,228,218,.07);
+  user-select:none;pointer-events:none;
+  will-change:transform;
+}
+.chapter.alt .chapter-ghost{right:auto;left:0}
+.chapter-head{display:flex;align-items:baseline;gap:1.6rem;flex-wrap:wrap}
+.chapter-no{
+  font-family:var(--serif);font-size:.85rem;letter-spacing:.4em;
+  color:var(--accent,var(--gold));
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(2.8rem,7vw,5.5rem);line-height:1.15;
+  letter-spacing:.08em;
+}
+.chapter h2 .cn{color:var(--ink)}
+.latin{
+  display:block;font-family:var(--serif);font-style:italic;font-weight:400;
+  font-size:clamp(.85rem,1.4vw,1.05rem);letter-spacing:.2em;
+  color:var(--ink-dim);margin-top:.8rem;
+}
+.chapter-grid{
+  display:grid;grid-template-columns:1.25fr .85fr;gap:4rem;
+  margin-top:3.5rem;align-items:start;
+}
+.chapter.alt .chapter-grid{grid-template-columns:.85fr 1.25fr}
+.chapter.alt .chapter-body{order:2}
+.chapter.alt .chapter-side{order:1}
+@media (max-width:860px){
+  .chapter-grid,.chapter.alt .chapter-grid{grid-template-columns:1fr}
+  .chapter.alt .chapter-body{order:1}
+  .chapter.alt .chapter-side{order:2}
+}
+.chapter-body p{
+  color:#c8c3b6;font-size:clamp(.95rem,1.3vw,1.08rem);
+  margin-bottom:1.6rem;
+}
+.chapter-body p b{color:var(--accent,var(--gold));font-weight:500}
+.note{
+  border-left:2px solid var(--accent,var(--gold));
+  padding:.4rem 0 .4rem 1.4rem;margin-top:2.4rem;
+  font-family:var(--serif);font-style:italic;
+  color:var(--ink-dim);font-size:.95rem;
+}
+.note strong{
+  display:block;font-style:normal;font-family:var(--sans);
+  font-size:.72rem;letter-spacing:.4em;color:var(--accent,var(--gold));
+  margin-bottom:.5rem;font-weight:500;
+}
+
+/* ---------- 数据卡 ---------- */
+.stat-card{
+  border:1px solid var(--line);border-radius:14px;
+  padding:2.2rem 2rem;
+  background:linear-gradient(160deg,rgba(255,255,255,.035),rgba(255,255,255,.008));
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  transition:transform .15s ease-out,border-color .4s;
+  will-change:transform;
+}
+.stat-card:hover{border-color:rgba(232,180,85,.35)}
+.stat-sigil{font-size:3rem;line-height:1;margin-bottom:1.6rem;display:block;filter:drop-shadow(0 0 18px var(--accent,var(--gold)))}
+.stat-row{margin-bottom:1.3rem}
+.stat-label{
+  display:flex;justify-content:space-between;
+  font-size:.74rem;letter-spacing:.22em;color:var(--ink-dim);
+  margin-bottom:.5rem;
+}
+.stat-label i{font-style:normal;color:var(--accent,var(--gold))}
+.stat-bar{height:3px;background:rgba(232,228,218,.1);border-radius:2px;overflow:hidden}
+.stat-fill{
+  height:100%;width:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--accent,var(--gold)),transparent 160%);
+  transition:width 1.4s cubic-bezier(.22,1,.36,1);
+}
+.visible .stat-fill{width:var(--w)}
+
+/* ---------- 滚动浮现 ---------- */
+.reveal{opacity:0;transform:translateY(48px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:none}
+
+/* ---------- 章节配色 ---------- */
+#dragon{--accent:#ff6b35}
+#elf{--accent:#7fd99a}
+#demon{--accent:#e0455e}
+#dwarf{--accent:#e8b455}
+#orc{--accent:#9ab84e}
+#wizard{--accent:#8d7bff}
+#lich{--accent:#4ed8c3}
+
+/* ---------- 冒险须知 ---------- */
+.tips{max-width:1180px;margin:0 auto;padding:clamp(7rem,14vh,10rem) 5vw}
+.tips h2{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(2.4rem,6vw,4.5rem);letter-spacing:.1em;margin-bottom:1.2rem;
+}
+.tips-sub{color:var(--ink-dim);max-width:38em;margin-bottom:4rem}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem}
+.tip{
+  border:1px solid var(--line);border-radius:14px;padding:2rem 1.8rem;
+  background:rgba(255,255,255,.018);
+  transition:transform .4s cubic-bezier(.22,1,.36,1),border-color .4s,background .4s;
+}
+.tip:hover{transform:translateY(-8px);border-color:rgba(232,180,85,.4);background:rgba(232,180,85,.04)}
+.tip-no{font-family:var(--serif);color:var(--gold);font-size:.8rem;letter-spacing:.3em;display:block;margin-bottom:1rem}
+.tip h3{font-family:var(--serif);font-weight:700;font-size:1.15rem;letter-spacing:.08em;margin-bottom:.8rem}
+.tip p{color:var(--ink-dim);font-size:.88rem}
+
+/* ---------- 页脚 ---------- */
+footer{
+  border-top:1px solid var(--line);
+  padding:5rem 5vw 3rem;text-align:center;position:relative;z-index:3;
+}
+footer .big{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(2rem,6vw,4rem);letter-spacing:.15em;
+  color:transparent;-webkit-text-stroke:1px rgba(232,228,218,.3);
+  margin-bottom:2rem;transition:color .6s,-webkit-text-stroke-color .6s;
+}
+footer .big:hover{color:var(--gold);-webkit-text-stroke-color:var(--gold)}
+footer p{color:var(--ink-dim);font-size:.8rem;letter-spacing:.15em}
+footer .tiny{font-size:.68rem;opacity:.55;margin-top:1.2rem}
+</style>
+</head>
+<body>
+
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+<canvas id="stars"></canvas>
+<canvas id="embers"></canvas>
+<div class="noise"></div>
+<div class="progress"></div>
+
+<nav>
+  <a class="logo" href="#top">奇幻<em>图鉴</em></a>
+  <ul class="nav-links">
+    <li><a href="#dragon">龙</a></li>
+    <li><a href="#elf">精灵</a></li>
+    <li><a href="#demon">恶魔</a></li>
+    <li><a href="#dwarf">矮人</a></li>
+    <li><a href="#orc">兽人</a></li>
+    <li><a href="#wizard">巫师</a></li>
+    <li><a href="#lich">巫妖</a></li>
+    <li><a href="#tips">冒险须知</a></li>
+  </ul>
+</nav>
+
+<main id="top">
+
+  <!-- 英雄区 -->
+  <section class="hero">
+    <p class="hero-eyebrow">A Field Guide to Classic Fantasy</p>
+    <h1>
+      奇幻冒险图鉴
+      <span class="stroke">西式奇幻生物 · 不完全指南</span>
+    </h1>
+    <p class="hero-sub">
+      在你踏入地下城、签下佣兵契约、或者对着一条龙说出"我们可以谈谈"之前——
+      请先读完这份图鉴。<b>它未必能救你的命，但至少能让你死得明白。</b>
+    </p>
+    <div class="scroll-hint">向下卷动</div>
+  </section>
+
+  <!-- 跑马灯 -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>屠龙</span><span class="gold">✦</span><span>寻宝</span><span class="gold">✦</span><span>掉进陷阱</span><span class="gold">✦</span><span>误签魔契</span><span class="gold">✦</span><span>酒馆斗殴</span><span class="gold">✦</span><span>抢救队友</span><span class="gold">✦</span><span>给吟游诗人封口费</span><span class="gold">✦</span>
+      <span>屠龙</span><span class="gold">✦</span><span>寻宝</span><span class="gold">✦</span><span>掉进陷阱</span><span class="gold">✦</span><span>误签魔契</span><span class="gold">✦</span><span>酒馆斗殴</span><span class="gold">✦</span><span>抢救队友</span><span class="gold">✦</span><span>给吟游诗人封口费</span><span class="gold">✦</span>
+    </div>
+  </div>
+
+  <!-- 01 龙 -->
+  <section class="chapter" id="dragon">
+    <div class="chapter-ghost" data-speed="0.12">01</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第壹章 / DRACO</span>
+      <h2><span class="cn">龙</span><span class="latin">Draco Maximus · 会飞的金融危机</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>本质上，龙是一只<b>会飞、会喷火、且有严重囤积癖的超大蜥蜴</b>。它们对黄金的执着程度，足以让任何一位银行家羞愧地交出执照——区别在于，银行至少假装你的存款还能取出来。</p>
+        <p>龙睡在金币堆上，并不是因为舒服（事实上硌得很），而是因为<b>不放心</b>。一条上了年纪的红龙，能在睡梦中精确报出宝库里少了哪一枚铜板，以及是哪个倒霉的冒险者拿的。</p>
+        <p>与龙对话时请注意措辞。它们极度虚荣，热爱被奉承，但智商又高到能识破所有奉承。所以正确的做法是：<b>真诚地奉承</b>。这听起来很矛盾，但你不妨想想自己是怎么跟领导说话的。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          "屠龙英雄"这个头衔的获得方式，九成是龙当时在睡觉。剩下一成是吹的。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">🐉</span>
+          <div class="stat-row"><div class="stat-label">危险等级 <i>必死</i></div><div class="stat-bar"><div class="stat-fill" style="--w:98%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">智力 <i>比你高</i></div><div class="stat-bar"><div class="stat-fill" style="--w:92%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">虚荣心 <i>爆表</i></div><div class="stat-bar"><div class="stat-fill" style="--w:100%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">理财能力 <i>只进不出</i></div><div class="stat-bar"><div class="stat-fill" style="--w:88%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">可交流性 <i>看心情</i></div><div class="stat-bar"><div class="stat-fill" style="--w:30%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 精灵 -->
+  <section class="chapter alt" id="elf">
+    <div class="chapter-ghost" data-speed="0.1">02</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第贰章 / ELF</span>
+      <h2><span class="cn">精灵</span><span class="latin">Homo Sylvanus · 三千岁的颜值天花板</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>精灵：优雅、长寿、箭术高超，以及——<b>对你的人生选择投以若有若无的轻蔑</b>。一个活了三千年的种族，最大的烦恼依然是刘海到底要不要剪，这件事本身就很说明问题。</p>
+        <p>精灵的时间观念和凡人完全不同。当一个精灵说"稍等片刻"，请坐下，最好顺便立个遗嘱。他们筹备一场宴会需要四十年，其中三十九年用来争论餐巾的折法是否<b>背离了上古传统</b>。</p>
+        <p>千万不要在精灵面前砍树、大声咀嚼、或者承认你没读过那首一万四千行的《星辰挽歌》。他们不会生气——他们只会<b>记住</b>。精灵的记仇时长以纪元为单位计算。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          精灵弓手说"我掩护你"时是认真的。箭确实会擦着你的耳朵飞过去——这是他们表达亲昵的方式。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">🏹</span>
+          <div class="stat-row"><div class="stat-label">颜值 <i>犯规</i></div><div class="stat-bar"><div class="stat-fill" style="--w:100%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">箭术 <i>指哪打哪</i></div><div class="stat-bar"><div class="stat-fill" style="--w:96%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">优越感 <i>与生俱来</i></div><div class="stat-bar"><div class="stat-fill" style="--w:94%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">办事效率 <i>以世纪计</i></div><div class="stat-bar"><div class="stat-fill" style="--w:12%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">记仇时长 <i>永恒</i></div><div class="stat-bar"><div class="stat-fill" style="--w:100%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 恶魔 -->
+  <section class="chapter" id="demon">
+    <div class="chapter-ghost" data-speed="0.12">03</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第叁章 / DAEMON</span>
+      <h2><span class="cn">恶魔</span><span class="latin">Daemonium Contractus · 地狱首席合同律师</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>忘掉獠牙和硫磺味吧，恶魔真正的武器是<b>合同法</b>。每一个恶魔都是宇宙级的执业律师，他们起草的契约严谨到连标点符号都在密谋夺取你的灵魂。</p>
+        <p>恶魔从不撒谎——这是行规。他们只是把真相裁剪得<b>恰到好处</b>。"我保证你会富有"，然后你变成了一座金矿里的矿工。"我让你心想事成"，然后你发现自己想什么都会立刻大声说出来。条款全部履行，童叟无欺。</p>
+        <p>签约之前，请务必阅读那行小到需要显微镜的小字。更稳妥的方案是：<b>不要签</b>。历史上从恶魔契约里全身而退的人数，约等于精灵承认自己错了的次数。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          如果一个恶魔主动说"这单我亏了"，请立刻检查你的灵魂还在不在。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">😈</span>
+          <div class="stat-row"><div class="stat-label">话术 <i>滴水不漏</i></div><div class="stat-bar"><div class="stat-fill" style="--w:100%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">法务能力 <i>地狱认证</i></div><div class="stat-bar"><div class="stat-fill" style="--w:99%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">诚信 <i>字面意义上的</i></div><div class="stat-bar"><div class="stat-fill" style="--w:50%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">售后服务 <i>无</i></div><div class="stat-bar"><div class="stat-fill" style="--w:3%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">违约金 <i>你的灵魂</i></div><div class="stat-bar"><div class="stat-fill" style="--w:100%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 矮人 -->
+  <section class="chapter alt" id="dwarf">
+    <div class="chapter-ghost" data-speed="0.1">04</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第肆章 / DVERGR</span>
+      <h2><span class="cn">矮人</span><span class="latin">Homo Ferrum · 把酒馆开进山里的工程师</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>矮人是唯一一个把<b>"下班去喝一杯"发展成文明基石</b>的种族。他们的城市建在山腹深处，不是为了防御，而是因为地下室离酒窖更近。</p>
+        <p>在矮人社会，胡子的长度约等于社会地位，锻造的手艺约等于个人魅力。一个矮人对你说"这把斧子还凑合"，意思是它能砍穿城门；说"这是我随手打的"，意思是他<b>为此熬了三个月没合眼，并且为每一道纹路写了诗</b>。</p>
+        <p>矮人记仇的方式很有特色：写进族谱。你两百年前欠某位矮人三个铜板，今天他的曾孙会拿着账本在城门口等你的后代。利息按复利算，<b>矮人发明了复利</b>。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          永远不要对矮人说"你挺高的"。这不是恭维，这是宣战。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">⚒️</span>
+          <div class="stat-row"><div class="stat-label">锻造 <i>传说级</i></div><div class="stat-bar"><div class="stat-fill" style="--w:98%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">酒量 <i>深不见底</i></div><div class="stat-bar"><div class="stat-fill" style="--w:100%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">倔强程度 <i>花岗岩</i></div><div class="stat-bar"><div class="stat-fill" style="--w:97%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">身高 <i>不许提</i></div><div class="stat-bar"><div class="stat-fill" style="--w:35%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">账本厚度 <i>世代相传</i></div><div class="stat-bar"><div class="stat-fill" style="--w:90%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 兽人 -->
+  <section class="chapter" id="orc">
+    <div class="chapter-ghost" data-speed="0.12">05</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第伍章 / ORC</span>
+      <h2><span class="cn">兽人</span><span class="latin">Orcus Viridis · 被严重误解的健身爱好者</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>绿色、暴躁、嗓门大——兽人在各类史诗里常年扮演背景板反派，这其实是一场<b>持续了几千年的公关灾难</b>。换位思考一下：如果每个路过你家的"英雄"都默认可以砍你刷经验，你的脾气也好不到哪儿去。</p>
+        <p>兽人文化崇尚力量，但远比传闻中讲规矩：单挑就是单挑，赢了就是赢了，<b>从不搞小字条款</b>（参见第叁章，某些角色应该学习一下）。一场体面的搏斗之后，兽人请你喝的蘑菇酒是真心的——虽然那玩意儿的味道像发酵过的战靴。</p>
+        <p>和兽人交朋友的方式简单粗暴：<b>掰手腕，输得有尊严</b>。赢了更好，他们尊重强者；输了也行，他们欣赏不哭的。唯一不可接受的是赢了之后炫耀——那你最好跑得比传闻中的快。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          兽人语里"瓦格！"既表示你好、再见、干杯，也表示"我要打碎你的膝盖"。请结合语境理解。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">🪓</span>
+          <div class="stat-row"><div class="stat-label">力量 <i>卧推一头牛</i></div><div class="stat-bar"><div class="stat-fill" style="--w:97%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">嗓门 <i>跨山谷可闻</i></div><div class="stat-bar"><div class="stat-fill" style="--w:95%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">契约精神 <i>意外地高</i></div><div class="stat-bar"><div class="stat-fill" style="--w:85%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">公关形象 <i>灾难</i></div><div class="stat-bar"><div class="stat-fill" style="--w:8%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">蘑菇酒口感 <i>勿试</i></div><div class="stat-bar"><div class="stat-fill" style="--w:15%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 巫师 -->
+  <section class="chapter alt" id="wizard">
+    <div class="chapter-ghost" data-speed="0.1">06</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第陆章 / MAGUS</span>
+      <h2><span class="cn">巫师</span><span class="latin">Magus Procrastinatus · 把"再研究研究"说了两百年</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>巫师是一群住在塔里的学者，塔的高度与<b>不想被人打扰的程度</b>成正比。他们掌握着撕裂天空、冻结时间的力量，但你让他清理一下书桌，他会说需要先发明一个新的分类学派。</p>
+        <p>向巫师求助的标准流程：你说明来意，他说"有意思"，然后消失在书堆里。两百年后，你的曾曾曾孙会收到一封信，开头是"<b>关于你先祖提出的问题，我有了一些初步想法</b>"。</p>
+        <p>巫师之间的学术争端非常precise且文明：先发表论文互相驳斥，再在年会上阴阳怪气，最后才动用陨石术。值得敬佩的是，他们管最后这个环节叫<b>"同行评审"</b>。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          当巫师说"这个法术我有八成把握"，意思是有两成概率你们全队变成青蛙。请自备荷叶。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">🔮</span>
+          <div class="stat-row"><div class="stat-label">奥术造诣 <i>深不可测</i></div><div class="stat-bar"><div class="stat-fill" style="--w:96%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">拖延症 <i>晚期</i></div><div class="stat-bar"><div class="stat-fill" style="--w:99%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">生活自理 <i>靠学徒</i></div><div class="stat-bar"><div class="stat-fill" style="--w:10%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">藏书量 <i>压垮地基</i></div><div class="stat-bar"><div class="stat-fill" style="--w:93%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">法术成功率 <i>"八成"</i></div><div class="stat-bar"><div class="stat-fill" style="--w:62%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 巫妖 -->
+  <section class="chapter" id="lich">
+    <div class="chapter-ghost" data-speed="0.12">07</div>
+    <div class="chapter-head reveal">
+      <span class="chapter-no">第柒章 / LICH</span>
+      <h2><span class="cn">巫妖</span><span class="latin">Magus Immortuus · 把灵魂存进罐子的理财大师</span></h2>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-body reveal">
+        <p>巫妖的前身是巫师——具体来说，是那种把"我还没研究完"贯彻到<b>拒绝死亡</b>地步的巫师。他们把灵魂取出来存进一个罐子（学名"命匣"），然后以为自己完成了人生最成功的一笔理财。</p>
+        <p>成为巫妖的代价包括：皮肤、头发、体温、味觉、朋友，以及参加任何社交活动的资格。收益是：<b>无限的时间</b>。讽刺的是，拥有无限时间的巫妖，论文产出量并没有显著提升——拖延症是连死亡都治不好的。</p>
+        <p>对付巫妖的唯一办法是找到命匣并摧毁它。所以每个巫妖都把命匣藏得极其刁钻：火山底、海沟里、套在十二层结界中央。然后，<b>每隔几百年就会有一个巫妖忘记自己把命匣放哪了</b>，整个不死大军停摆三个月帮老板找罐子。</p>
+        <div class="note">
+          <strong>冒险者备注</strong>
+          巫妖讲冷笑话是字面意义上的——室温会真的下降。礼貌性假笑时请注意保暖。
+        </div>
+      </div>
+      <div class="chapter-side reveal">
+        <div class="stat-card tilt">
+          <span class="stat-sigil">💀</span>
+          <div class="stat-row"><div class="stat-label">不死性 <i>除非砸罐</i></div><div class="stat-bar"><div class="stat-fill" style="--w:99%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">禁忌知识 <i>馆藏级</i></div><div class="stat-bar"><div class="stat-fill" style="--w:97%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">社交活跃度 <i>已注销</i></div><div class="stat-bar"><div class="stat-fill" style="--w:2%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">藏东西水平 <i>连自己都找不到</i></div><div class="stat-bar"><div class="stat-fill" style="--w:91%"></div></div></div>
+          <div class="stat-row"><div class="stat-label">幽默感 <i>字面意义的冷</i></div><div class="stat-bar"><div class="stat-fill" style="--w:40%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 冒险须知 -->
+  <section class="tips" id="tips">
+    <div class="reveal">
+      <h2>冒险者生存须知</h2>
+      <p class="tips-sub">以下条目均由前辈冒险者用生命验证。我们对"前辈"二字的使用持过去时态。</p>
+    </div>
+    <div class="tips-grid">
+      <div class="tip reveal"><span class="tip-no">第 01 条</span><h3>别碰发光的东西</h3><p>地下城里会发光的物品分两类：诅咒了的，和诅咒得更厉害的。如果它还在轻声呼唤你的名字，请直接退出副本。</p></div>
+      <div class="tip reveal"><span class="tip-no">第 02 条</span><h3>善待吟游诗人</h3><p>你的英雄事迹长什么样，完全取决于他那天的心情。给小费，否则史诗里你将以"那个在沼泽里哭的人"的形象流传千古。</p></div>
+      <div class="tip reveal"><span class="tip-no">第 03 条</span><h3>宝箱会咬人</h3><p>统计表明，地下城中约一成的宝箱是拟态怪。开箱前先扔块肉过去——如果宝箱咀嚼了，今天就到此为止吧。</p></div>
+      <div class="tip reveal"><span class="tip-no">第 04 条</span><h3>不要念出声</h3><p>看不懂的铭文就让它继续看不懂。历史上每一次"我就小声读一下"，平均召唤出 1.7 个上古邪神。</p></div>
+      <div class="tip reveal"><span class="tip-no">第 05 条</span><h3>队伍里要有牧师</h3><p>不是建议，是刚需。没有牧师的冒险小队，专业术语称为"一次性冒险小队"。</p></div>
+      <div class="tip reveal"><span class="tip-no">第 06 条</span><h3>逃跑不丢人</h3><p>奇幻世界的第一生存法则：你不需要跑赢龙，你只需要跑赢队伍里嘲讽你跑得慢的那个人。</p></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="big">愿你的骰子永远大成功</div>
+  <p>奇幻冒险图鉴 · 本图鉴中所有生物均未在编写过程中受到伤害（编写者除外）</p>
+  <p class="tiny">灵感致敬暗色极简与流动光影 · 以及每一位在酒馆里接下委托的冒险者</p>
+</footer>
+
+<script>
+/* ---------- 自定义光标 ---------- */
+const dot=document.querySelector('.cursor-dot'),ring=document.querySelector('.cursor-ring');
+let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;});
+(function ringLoop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(ringLoop);})();
+document.querySelectorAll('a,.tip,.stat-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('hovering'));
+});
+
+/* ---------- 星空 ---------- */
+const sc=document.getElementById('stars'),sx=sc.getContext('2d');
+let stars=[];
+function initStars(){
+  sc.width=innerWidth;sc.height=innerHeight;
+  stars=Array.from({length:Math.min(160,innerWidth/8)},()=>({
+    x:Math.random()*sc.width,y:Math.random()*sc.height,
+    r:Math.random()*1.2+.2,p:Math.random()*Math.PI*2,s:.008+Math.random()*.02
+  }));
+}
+initStars();addEventListener('resize',initStars);
+(function starLoop(){
+  sx.clearRect(0,0,sc.width,sc.height);
+  for(const st of stars){
+    st.p+=st.s;
+    const a=.25+Math.abs(Math.sin(st.p))*.55;
+    sx.beginPath();sx.arc(st.x,st.y,st.r,0,7);
+    sx.fillStyle=`rgba(232,228,218,${a})`;sx.fill();
+  }
+  requestAnimationFrame(starLoop);
+})();
+
+/* ---------- 余烬粒子 ---------- */
+const ec=document.getElementById('embers'),ex=ec.getContext('2d');
+let embers=[];
+function resizeEmbers(){ec.width=innerWidth;ec.height=innerHeight;}
+resizeEmbers();addEventListener('resize',resizeEmbers);
+function spawnEmber(){
+  return{
+    x:Math.random()*ec.width,y:ec.height+10,
+    vx:(Math.random()-.5)*.35,vy:-(.25+Math.random()*.8),
+    r:Math.random()*2+.6,life:1,decay:.0015+Math.random()*.0025,
+    hue:Math.random()<.7?28:43
+  };
+}
+(function emberLoop(){
+  ex.clearRect(0,0,ec.width,ec.height);
+  if(embers.length<70&&Math.random()<.4)embers.push(spawnEmber());
+  embers=embers.filter(p=>p.life>0&&p.y>-20);
+  for(const p of embers){
+    p.x+=p.vx+Math.sin(p.y*.01)*.3;p.y+=p.vy;p.life-=p.decay;
+    ex.beginPath();ex.arc(p.x,p.y,p.r*p.life,0,7);
+    ex.fillStyle=`hsla(${p.hue},90%,60%,${p.life*.7})`;
+    ex.shadowColor=`hsla(${p.hue},90%,55%,${p.life})`;ex.shadowBlur=8;
+    ex.fill();ex.shadowBlur=0;
+  }
+  requestAnimationFrame(emberLoop);
+})();
+
+/* ---------- 进度条 + 幽灵数字视差 ---------- */
+const progress=document.querySelector('.progress');
+const ghosts=document.querySelectorAll('.chapter-ghost');
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  progress.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  for(const g of ghosts){
+    const rect=g.parentElement.getBoundingClientRect();
+    g.style.transform=`translateY(${rect.top*parseFloat(g.dataset.speed)}px)`;
+  }
+},{passive:true});
+
+/* ---------- 滚动浮现 ---------- */
+const io=new IntersectionObserver(entries=>{
+  for(const en of entries)if(en.isIntersecting){en.target.classList.add('visible');io.unobserve(en.target);}
+},{threshold:.18});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- 卡片 3D 倾斜 ---------- */
+document.querySelectorAll('.tilt').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`perspective(800px) rotateY(${px*10}deg) rotateX(${-py*10}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave',()=>card.style.transform='');
+});
+</script>
+</body>
+</html>
